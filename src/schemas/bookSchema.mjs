@@ -45,6 +45,7 @@ const bookSchema = new Schema({
       required: true,
     },
   },
+  userList: []
 });
 
 const bookTable = model("book", bookSchema);

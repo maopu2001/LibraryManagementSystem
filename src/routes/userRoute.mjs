@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import userTable from "../schemas/userSchema.mjs";
 
 const router = express.Router();
@@ -64,6 +63,12 @@ router.post("/api/users", async (req, res) => {
 router.patch("/api/users/:regId", async (req, res) => {
   const { body } = req;
   const { regId } = req.params;
+
+  if (body.name && (!body.name.first || !body.name.last))
+    return res
+      .status(400)
+      .json({ message: "Both first and last name are required" });
+
   try {
     if (await userTable.exists({ regId: regId })) {
       // console.log(id);

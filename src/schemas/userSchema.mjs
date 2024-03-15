@@ -29,6 +29,7 @@ const userSchema = new Schema({
     type: Number,
     required: true,
   },
+  bookList: [],
 });
 
 const userTable = model("user", userSchema);

@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import bookTable from "../schemas/bookSchema.mjs";
 
 const router = express.Router();
