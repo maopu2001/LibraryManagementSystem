@@ -1,15 +1,19 @@
-Install mongodb to successfully run this application.
+> [!CAUTION]
+> Run these commands first
+>```shell
+>npm i dotenv express mongoose
+>npm i nodemon --save-dev
+>```
+>
 
-Dependencies:
-1. dotenv
-2. express
-3. mongoose
+> [!IMPORTANT]
+> **Install mongodb to successfully run this application.**
 
-Dev-dependencies:
-1. nodemon
-
-to run this application with node
+To run this application with **node**
+```shell
 npm run start
-
-to run this application with nodemon
+```
+To run this application with **nodemon**
+```shell
 npm run start:dev
+```
