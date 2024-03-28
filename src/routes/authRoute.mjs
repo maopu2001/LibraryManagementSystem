@@ -14,12 +14,12 @@ router.get("/api/auth", async (req, res) => {
       console.log(password);
       console.log(user.password);
       if (bcrypt.compareSync(password, user.password)) {
-        return res.status(200).json("Success");
+        return res.status(200).json({ message: "Success" });
       } else {
-        return res.status(400).json("Not Matched");
+        return res.status(400).json({ message: "Not Matched" });
       }
     } else {
-      return res.status(404).json("User Not Found");
+      return res.status(404).json({ message: "User Not Found" });
     }
   } catch (err) {
     return res.sendStatus(400);

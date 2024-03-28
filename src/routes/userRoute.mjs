@@ -73,7 +73,7 @@ router.patch("/api/users/:regId", async (req, res) => {
       );
       return res.status(200).send(updatedUser);
     } else {
-      return res.status(400).json({ msg: "User not found" });
+      return res.status(400).json({ message: "User not found" });
     }
   } catch (err) {
     return res.status(400).json({ Error: err });
@@ -91,7 +91,7 @@ router.delete("/api/users/:id", async (req, res) => {
         .sort({ regId: 1 });
       return res.status(200).json(Users);
     } else {
-      return res.status(400).json({ msg: "User not found" });
+      return res.status(400).json({ message: "User not found" });
     }
   } catch (err) {
     return res.status(400).json({ Error: err });
