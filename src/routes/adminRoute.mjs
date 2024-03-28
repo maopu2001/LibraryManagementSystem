@@ -4,7 +4,7 @@ import bookTable from "../schemas/bookSchema.mjs";
 
 const router = express.Router();
 
-let limit = 5;
+let limit = 3;
 
 router.post("/api/admin/bookLimit", async (req, res) => {
   limit = req.body.limit;

@@ -65,8 +65,6 @@ router.patch("/api/books/:id", async (req, res) => {
   const { body } = req;
   const { id } = req.params;
 
-  if (body.bookName && !body.bookName.title)
-    return res.status(400).json({ message: "Title is required" });
   if (body.shelfLoc && !body.shelfLoc.shelfNo)
     return res.status(400).json({ message: "Shelf Number is required" });
   if (body.shelfLoc && !body.shelfLoc.shelveNo)

@@ -7,14 +7,12 @@ const bookSchema = new Schema({
     index: true,
     required: true,
   },
-  bookName: {
-    title: {
-      type: String,
-      required: true,
-    },
-    ed: {
-      type: Number,
-    },
+  title: {
+    type: String,
+    required: true,
+  },
+  ed: {
+    type: Number,
   },
   author: {
     type: String,
@@ -45,7 +43,7 @@ const bookSchema = new Schema({
       required: true,
     },
   },
-  userList: []
+  userList: [],
 });
 
 const bookTable = model("book", bookSchema);

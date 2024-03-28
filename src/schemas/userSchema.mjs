@@ -8,14 +8,8 @@ const userSchema = new Schema({
     required: true,
   },
   name: {
-    first: {
-      type: String,
-      required: true,
-    },
-    last: {
-      type: String,
-      required: true,
-    },
+    type: String,
+    required: true,
   },
   session: {
     type: String,
