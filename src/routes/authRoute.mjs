@@ -29,12 +29,14 @@ const jwtTokenVerifier = (token) => {
 
 // verify session cookie
 router.get("/api/authverify", async (req, res) => {
-  const token = req.headers.cookie.split("token=").at(1);
-  console.log(token);
-  console.log(jwtTokenVerifier(token));
-  if (jwtTokenVerifier(token))
-    res.status(200).json({ message: "Token matched" });
-  else res.status(400).json({ message: "Wrong token" });
+  try {
+    const token = req.headers.cookie.split("token=").at(1);
+    if (jwtTokenVerifier(token))
+      res.status(200).json({ message: "Token matched" });
+    else res.status(400).json({ message: "Wrong token" });
+  } catch (err) {
+    return res.redirect("/");
+  }
 });
 
 // login

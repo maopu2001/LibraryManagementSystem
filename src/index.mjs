@@ -13,6 +13,10 @@ const app = express();
 app.use(express.json());
 app.use(routes);
 
+app.get("/", (req, res) => {
+  res.status(200).send("Welcome to the backend of LibraryManagementProject");
+});
+
 app.listen(process.env.PORT, () =>
   console.log(`Running on PORT ${process.env.PORT}`)
 );
