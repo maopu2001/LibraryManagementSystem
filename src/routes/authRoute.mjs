@@ -10,6 +10,7 @@ const router = express.Router();
 const jwtTokenGenerator = (user) => {
   const payload = {
     regId: user.regId,
+    type: user.type,
     password: user.password,
     updatedAt: user.updatedAt,
   };
@@ -31,8 +32,8 @@ const jwtTokenVerifier = (token) => {
 router.get("/api/authverify", async (req, res) => {
   try {
     const token = req.headers.cookie.split("token=").at(1);
-    if (jwtTokenVerifier(token))
-      res.status(200).json({ message: "Token matched" });
+    const result = jwtTokenVerifier(token);
+    if (result) res.status(200).json({ message: "Success", type: result.type });
     else res.status(400).json({ message: "Wrong token" });
   } catch (err) {
     return res.redirect("/");
@@ -45,13 +46,11 @@ router.post("/api/login", async (req, res) => {
   try {
     if (await authTable.exists({ regId: regId })) {
       const user = await authTable.findOne({ regId: regId }, "-_id -__v");
-      console.log(user);
-      if (bcrypt.compareSync(password, user.password)) {
-        res.cookie("token", jwtTokenGenerator(user));
-        return res.status(200).json({ message: "Sucess", user });
-      } else {
-        return res.status(400).json({ message: "Not Matched" });
-      }
+      if (!bcrypt.compareSync(password, user.password))
+        return res.status(400).json({ message: "Password Not Matched" });
+
+      res.cookie("token", jwtTokenGenerator(user));
+      return res.status(200).json({ message: "Sucess", user });
     } else {
       return res.status(404).json({ message: "User Not Found" });
     }
@@ -74,11 +73,13 @@ router.post("/api/register", async (req, res) => {
   }
   try {
     const hashedPassword = bcrypt.hashSync(body.password, SALT_ROUND);
-    const data = {
+    let Type = body.type;
+    if (Type != "admin") Type = "user";
+    const newUser = await authTable.create({
       regId: body.regId,
       password: hashedPassword,
-    };
-    const newUser = await authTable.create(data);
+      type: Type,
+    });
     return res.status(200).json(newUser);
   } catch (err) {
     return res.status(400).json({ Error: err.message });

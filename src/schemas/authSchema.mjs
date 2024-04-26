@@ -3,12 +3,16 @@ import { Schema, model } from "mongoose";
 const authSchema = new Schema(
   {
     regId: {
-      type: String,
-      unique: true,
+      type: Number,
       index: true,
+      unique: true,
       required: true,
     },
     password: {
+      type: String,
+      required: true,
+    },
+    type: {
       type: String,
       required: true,
     },
