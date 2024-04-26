@@ -2,7 +2,7 @@
 > Run these commands first
 >
 > ```shell
-> npm i dotenv express mongoose bcrypt jsonwebtoken
+> npm i dotenv express mongoose bcrypt jsonwebtoken cors
 > npm i nodemon --save-dev
 > ```
 

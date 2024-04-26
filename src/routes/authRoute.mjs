@@ -9,7 +9,7 @@ const router = express.Router();
 
 const jwtTokenGenerator = (user) => {
   const payload = {
-    username: user.username,
+    regId: user.regId,
     password: user.password,
     updatedAt: user.updatedAt,
   };
@@ -41,10 +41,10 @@ router.get("/api/authverify", async (req, res) => {
 
 // login
 router.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { regId, password } = req.body;
   try {
-    if (await authTable.exists({ username: username })) {
-      const user = await authTable.findOne({ username: username }, "-_id -__v");
+    if (await authTable.exists({ regId: regId })) {
+      const user = await authTable.findOne({ regId: regId }, "-_id -__v");
       console.log(user);
       if (bcrypt.compareSync(password, user.password)) {
         res.cookie("token", jwtTokenGenerator(user));
@@ -75,7 +75,7 @@ router.post("/api/register", async (req, res) => {
   try {
     const hashedPassword = bcrypt.hashSync(body.password, SALT_ROUND);
     const data = {
-      username: body.username,
+      regId: body.regId,
       password: hashedPassword,
     };
     const newUser = await authTable.create(data);
@@ -97,7 +97,7 @@ router.patch("/api/register/:id", async (req, res) => {
   try {
     const hashedPassword = bcrypt.hashSync(body.password, SALT_ROUND);
     const newUser = await authTable.updateOne(
-      { username: id },
+      { regId: id },
       { password: hashedPassword }
     );
     return res.status(200).json(newUser);

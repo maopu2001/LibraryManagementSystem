@@ -2,6 +2,8 @@ import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import routes from "./routes/indexRoute.mjs";
+import cors from "cors";
+
 config({ path: ".env" });
 
 mongoose
@@ -10,6 +12,7 @@ mongoose
   .catch((err) => console.log(`Error: ${err}`));
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(routes);
 
