@@ -26,7 +26,7 @@ router.get("/api/books", async (req, res) => {
           "-_id -__v"
         )
         .sort({ ISBN: 1 });
-      return res.status(201).json(Books);
+      return res.status(200).json(Books);
     } else {
       return res.sendStatus(400);
     }
@@ -78,7 +78,7 @@ router.patch("/api/books/:id", async (req, res) => {
       );
       return res.status(200).send(updatedBook);
     } else {
-      return res.status(400).json({ message: "Book not found" });
+      return res.status(404).json({ message: "Book not found" });
     }
   } catch (err) {
     return res.status(400).json({ Error: err.message });
@@ -94,7 +94,7 @@ router.delete("/api/books/:id", async (req, res) => {
       const Books = await bookTable.find({}, "-_id -__v").sort({ ISBN: 1 });
       return res.status(200).json(Books);
     } else {
-      return res.status(400).json({ message: "Book not found" });
+      return res.status(404).json({ message: "Book not found" });
     }
   } catch (err) {
     return res.status(400).json({ Error: err });

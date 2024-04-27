@@ -17,7 +17,7 @@ router.patch("/api/admin/bookIssue/:id", async (req, res) => {
   const { id } = req.params;
   // checking if this user exists
   if (!(await userTable.exists({ regId: id }))) {
-    return res.status(400).json({ message: "User not found" });
+    return res.status(404).json({ message: "User not found" });
   }
 
   try {
@@ -78,7 +78,7 @@ router.patch("/api/admin/bookReturn/:id", async (req, res) => {
 
   // checking if the user exists
   if (!(await userTable.exists({ regId: id }))) {
-    return res.status(400).json({ message: "User not found" });
+    return res.status(404).json({ message: "User not found" });
   }
 
   try {

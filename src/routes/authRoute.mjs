@@ -34,9 +34,9 @@ router.get("/api/authverify", async (req, res) => {
     const token = req.headers.cookie.split("token=").at(1);
     const result = jwtTokenVerifier(token);
     if (result) res.status(200).json({ message: "Success", type: result.type });
-    else res.status(400).json({ message: "Wrong token" });
+    else res.sendStatus(400);
   } catch (err) {
-    return res.redirect("/");
+    return res.sendStatus(400);
   }
 });
 
@@ -47,7 +47,7 @@ router.post("/api/login", async (req, res) => {
     if (await authTable.exists({ regId: regId })) {
       const user = await authTable.findOne({ regId: regId }, "-_id -__v");
       if (!bcrypt.compareSync(password, user.password))
-        return res.status(400).json({ message: "Password Not Matched" });
+        return res.status(404).json({ message: "Password Not Matched" });
 
       res.cookie("token", jwtTokenGenerator(user));
       return res.status(200).json({ message: "Sucess", user });
