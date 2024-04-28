@@ -14,9 +14,7 @@ const jwtTokenGenerator = (user) => {
     password: user.password,
     updatedAt: user.updatedAt,
   };
-  return jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+  return jwt.sign(payload, process.env.JWT_SECRET_KEY);
 };
 
 const jwtTokenVerifier = (token) => {
@@ -31,7 +29,8 @@ const jwtTokenVerifier = (token) => {
 // verify session cookie
 router.get("/api/authverify", async (req, res) => {
   try {
-    const token = req.headers.cookie.split("token=").at(1);
+    // const token = req.headers.cookie.split("token=").at(1);
+    const token = req.body.token;
     const result = jwtTokenVerifier(token);
     if (result) res.status(200).json({ message: "Success", type: result.type });
     else res.sendStatus(400);
@@ -48,15 +47,18 @@ router.post("/api/login", async (req, res) => {
       const user = await authTable.findOne({ regId: regId }, "-_id -__v");
       if (!bcrypt.compareSync(password, user.password))
         return res.status(404).json({ message: "Password Not Matched" });
-
-      res.cookie("token", jwtTokenGenerator(user), {
-        path: "/",
-        httpOnly: true,
-        maxAge: 30 * 60 * 1000,
-        sameSite: "none",
-        secure: true,
+      // res.cookie("token", jwtTokenGenerator(user), {
+      //   path: "/",
+      //   httpOnly: true,
+      //   maxAge: 30 * 60 * 1000,
+      //   sameSite: "none",
+      //   secure: true,
+      // });
+      return res.status(200).json({
+        message: "Sucess",
+        type: user.type,
+        token: jwtTokenGenerator(user),
       });
-      return res.status(200).json({ message: "Sucess" });
     } else {
       return res.status(404).json({ message: "User Not Found" });
     }
