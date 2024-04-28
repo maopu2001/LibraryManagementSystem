@@ -1,5 +1,6 @@
 import express from "express";
 import userTable from "../schemas/userSchema.mjs";
+import authTable from "../schemas/authSchema.mjs";
 
 const router = express.Router();
 
@@ -86,6 +87,7 @@ router.delete("/api/users/:id", async (req, res) => {
   try {
     if (await userTable.exists({ regId: id })) {
       await userTable.deleteOne({ regId: id });
+      await authTable.deleteOne({ regId: id });
       const Users = await userTable
         .find({}, "-_id -name._id -__v")
         .sort({ regId: 1 });
