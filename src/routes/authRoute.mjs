@@ -49,8 +49,14 @@ router.post("/api/login", async (req, res) => {
       if (!bcrypt.compareSync(password, user.password))
         return res.status(404).json({ message: "Password Not Matched" });
 
-      res.cookie("token", jwtTokenGenerator(user));
-      return res.status(200).json({ message: "Sucess", user });
+      res.cookie("token", jwtTokenGenerator(user), {
+        path: "/",
+        httpOnly: true,
+        maxAge: 30 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
+      });
+      return res.status(200).json({ message: "Sucess" });
     } else {
       return res.status(404).json({ message: "User Not Found" });
     }
