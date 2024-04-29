@@ -27,12 +27,17 @@ const jwtTokenVerifier = (token) => {
 };
 
 // verify session cookie
-router.get("/api/authverify", async (req, res) => {
+router.post("/api/authverify", async (req, res) => {
   try {
     // const token = req.headers.cookie.split("token=").at(1);
     const token = req.body.token;
     const result = jwtTokenVerifier(token);
-    if (result) res.status(200).json({ message: "Success", type: result.type });
+    if (result)
+      res.status(200).json({
+        message: "Success",
+        regId: result.regId,
+        type: result.type,
+      });
     else res.sendStatus(400);
   } catch (err) {
     return res.sendStatus(400);
