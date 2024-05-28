@@ -1,9 +1,6 @@
-import express from "express";
-import bookTable from "../schemas/bookSchema.mjs";
+import bookTable from "../schemas/books.mjs";
 
-const router = express.Router();
-
-router.get("/api/books", async (req, res) => {
+export const filterBookInfo = async (req, res) => {
   const {
     query: { filter, value },
   } = req;
@@ -33,9 +30,9 @@ router.get("/api/books", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-router.get("/api/books/:id", async (req, res) => {
+export const getBookInfoByID = async (req, res) => {
   const { id } = req.params;
   try {
     if (await bookTable.exists({ ISBN: id })) {
@@ -47,10 +44,9 @@ router.get("/api/books/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-//POST
-router.post("/api/books", async (req, res) => {
+export const insertBookInfo = async (req, res) => {
   const { body } = req;
   try {
     const newBook = await bookTable.create(body);
@@ -58,10 +54,9 @@ router.post("/api/books", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err.message });
   }
-});
+};
 
-//PATCH
-router.patch("/api/books/:id", async (req, res) => {
+export const patchBookInfo = async (req, res) => {
   const { body } = req;
   const { id } = req.params;
 
@@ -83,10 +78,9 @@ router.patch("/api/books/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err.message });
   }
-});
+};
 
-//Delete
-router.delete("/api/books/:id", async (req, res) => {
+export const deleteBookInfo = async (req, res) => {
   const { id } = req.params;
   try {
     if (await bookTable.exists({ ISBN: id })) {
@@ -99,6 +93,4 @@ router.delete("/api/books/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
-
-export default router;
+};

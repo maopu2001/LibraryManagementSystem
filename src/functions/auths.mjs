@@ -1,11 +1,8 @@
-import express from "express";
 import bcrypt from "bcrypt";
-import authTable from "../schemas/authSchema.mjs";
+import authTable from "../schemas/auths.mjs";
 import jwt from "jsonwebtoken";
 
 const SALT_ROUND = 10;
-
-const router = express.Router();
 
 const jwtTokenGenerator = (user) => {
   const payload = {
@@ -26,8 +23,12 @@ const jwtTokenVerifier = (token) => {
   }
 };
 
+const hashPass = (password) => {
+  return bcrypt.hashSync(password, SALT_ROUND);
+};
+
 // verify session cookie
-router.post("/api/authverify", async (req, res) => {
+export const sessionVerifier = async (req, res) => {
   try {
     // const token = req.headers.cookie.split("token=").at(1);
     const token = req.body.token;
@@ -42,23 +43,16 @@ router.post("/api/authverify", async (req, res) => {
   } catch (err) {
     return res.sendStatus(400);
   }
-});
+};
 
 // login
-router.post("/api/login", async (req, res) => {
+export const sessionLogin = async (req, res) => {
   const { regId, password } = req.body;
   try {
     if (await authTable.exists({ regId: regId })) {
       const user = await authTable.findOne({ regId: regId }, "-_id -__v");
       if (!bcrypt.compareSync(password, user.password))
         return res.status(404).json({ message: "Password Not Matched" });
-      // res.cookie("token", jwtTokenGenerator(user), {
-      //   path: "/",
-      //   httpOnly: true,
-      //   maxAge: 30 * 60 * 1000,
-      //   sameSite: "none",
-      //   secure: true,
-      // });
       return res.status(200).json({
         message: "Sucess",
         type: user.type,
@@ -70,37 +64,46 @@ router.post("/api/login", async (req, res) => {
   } catch (err) {
     return res.sendStatus(400);
   }
-});
+};
 
 //logout
-router.delete("/api/logout", async (req, res) => {
+export const sessionLogout = async (req, res) => {
   res.clearCookie("token");
   return res.status(200).json({ message: "Logout Success" });
-});
+};
 
 // create new user account
-router.post("/api/register", async (req, res) => {
+export const createAccount = async (Id, password, type) => {
+  const hashedPassword = hashPass(password);
+  let Type = type;
+  if (Id != "zeroOrOne" && Type != "admin") Type = "user";
+  if (!(await authTable.exists({ regId: Id }))) {
+    const newUser = await authTable.create({
+      regId: Id,
+      password: hashedPassword,
+      type: Type,
+    });
+    return newUser;
+  } else {
+    return null;
+  }
+};
+
+export const register = async (req, res) => {
   const { body } = req;
   if (body.password.length > 16) {
     return res.status(400).json({ Error: "Password is too long" });
   }
   try {
-    const hashedPassword = bcrypt.hashSync(body.password, SALT_ROUND);
-    let Type = body.type;
-    if (Type != "admin") Type = "user";
-    const newUser = await authTable.create({
-      regId: body.regId,
-      password: hashedPassword,
-      type: Type,
-    });
+    const newUser = createAccount(body.regId, body.password, body.type);
     return res.status(200).json(newUser);
   } catch (err) {
     return res.status(400).json({ Error: err.message });
   }
-});
+};
 
 // forget password
-router.patch("/api/register/:id", async (req, res) => {
+export const forgotPass = async (req, res) => {
   const {
     body,
     params: { id },
@@ -118,6 +121,4 @@ router.patch("/api/register/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err.message });
   }
-});
-
-export default router;
+};

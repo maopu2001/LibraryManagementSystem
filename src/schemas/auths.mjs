@@ -1,9 +1,8 @@
 import { Schema, model } from "mongoose";
-
 const authSchema = new Schema(
   {
     regId: {
-      type: Number,
+      type: String,
       index: true,
       unique: true,
       required: true,
@@ -21,4 +20,5 @@ const authSchema = new Schema(
 );
 
 const authTable = model("auth", authSchema);
+
 export default authTable;

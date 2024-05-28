@@ -1,10 +1,7 @@
-import express from "express";
-import userTable from "../schemas/userSchema.mjs";
-import authTable from "../schemas/authSchema.mjs";
+import userTable from "../schemas/users.mjs";
+import authTable from "../schemas/auths.mjs";
 
-const router = express.Router();
-
-router.get("/api/users", async (req, res) => {
+export const filterUserInfo = async (req, res) => {
   const {
     query: { filter, value },
   } = req;
@@ -34,9 +31,9 @@ router.get("/api/users", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-router.get("/api/users/:id", async (req, res) => {
+export const getUserInfoByID = async (req, res) => {
   const { id } = req.params;
   try {
     if (await userTable.exists({ regId: id })) {
@@ -48,20 +45,26 @@ router.get("/api/users/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-router.post("/api/users", async (req, res) => {
+export const createUser = async (body) => {
+  if (!(await userTable.exists({ regId: body.regId }))) {
+    const newUser = await userTable.create(body);
+    return newUser;
+  } else return null;
+};
+
+export const insertUserInfo = async (req, res) => {
   const { body } = req;
   try {
-    const newUser = await userTable.create(body);
+    const newUser = createUser(body);
     return res.status(200).json(newUser);
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-//Patch
-router.patch("/api/users/:regId", async (req, res) => {
+export const patchUserInfo = async (req, res) => {
   const { body } = req;
   const { regId } = req.params;
 
@@ -79,10 +82,9 @@ router.patch("/api/users/:regId", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
+};
 
-//Delete
-router.delete("/api/users/:id", async (req, res) => {
+export const deleteUserInfo = async (req, res) => {
   const { id } = req.params;
   try {
     if (await userTable.exists({ regId: id })) {
@@ -98,6 +100,4 @@ router.delete("/api/users/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ Error: err });
   }
-});
-
-export default router;
+};

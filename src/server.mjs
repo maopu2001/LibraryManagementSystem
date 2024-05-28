@@ -1,8 +1,8 @@
 import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import routes from "./routes/indexRoute.mjs";
 import cors from "cors";
+import routes from "./routes/index.mjs";
 
 config({ path: ".env" });
 

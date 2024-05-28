@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema({
   regId: {
-    type: Number,
+    type: String,
     unique: true,
     index: true,
     required: true,

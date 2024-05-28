@@ -1,18 +1,14 @@
-import express from "express";
-import userTable from "../schemas/userSchema.mjs";
-import bookTable from "../schemas/bookSchema.mjs";
-
-const router = express.Router();
+import userTable from "../schemas/users.mjs";
+import bookTable from "../schemas/books.mjs";
 
 let SLOT_LIMIT = 3;
 
-router.post("/api/admin/bookLimit", async (req, res) => {
+export const changeBookSlotLimit = async (req, res) => {
   SLOT_LIMIT = req.body.limit;
   res.status(200).json({ message: "Book limit updated" });
-});
+};
 
-// Issuing book
-router.patch("/api/admin/bookIssue/:id", async (req, res) => {
+export const issueBook = async (req, res) => {
   const bookArray = req.body.bookList;
   const { id } = req.params;
   // checking if this user exists
@@ -69,10 +65,10 @@ router.patch("/api/admin/bookIssue/:id", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
-});
+};
 
 //Returning book
-router.patch("/api/admin/bookReturn/:id", async (req, res) => {
+export const returnBook = async (req, res) => {
   const bookArray = req.body.bookList;
   const { id } = req.params;
 
@@ -113,6 +109,4 @@ router.patch("/api/admin/bookReturn/:id", async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-});
-
-export default router;
+};
