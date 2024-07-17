@@ -5,8 +5,8 @@
   "main": "server.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "nodemon ./src/server.mjs",
-    "start": "node ./src/server.mjs"
+    "start:dev": "nodemon ./index.mjs",
+    "start": "node ./index.mjs"
   },
   "keywords": [],
   "author": "",

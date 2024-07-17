@@ -2,7 +2,7 @@ import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import routes from "./routes/index.mjs";
+import routes from "./src/routes/index.mjs";
 
 config({ path: ".env" });
 
@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
-app.use(routes);
+app.use("/api", routes);
 
 app.get("/", (req, res) => {
   res.status(200).send("Welcome to the backend of LibraryManagementProject");

@@ -5,18 +5,18 @@ import {
   insertUserInfo,
   patchUserInfo,
   deleteUserInfo,
-} from "../functions/users.mjs";
+} from "../controller/users.mjs";
 
 const router = Router();
 
-router.get("/api/users", async (req, res) => filterUserInfo(req, res));
+router.get("/users", async (req, res) => filterUserInfo(req, res));
 
-router.get("/api/users/:id", async (req, res) => getUserInfoByID(req, res));
+router.get("users/:id", async (req, res) => getUserInfoByID(req, res));
 
-router.post("/api/users", async (req, res) => insertUserInfo(req, res));
+router.post("/users", async (req, res) => insertUserInfo(req, res));
 
-router.patch("/api/users/:regId", async (req, res) => patchUserInfo(req, res));
+router.patch("/users/:regId", async (req, res) => patchUserInfo(req, res));
 
-router.delete("/api/users/:id", async (req, res) => deleteUserInfo(req, res));
+router.delete("/users/:id", async (req, res) => deleteUserInfo(req, res));
 
 export default router;

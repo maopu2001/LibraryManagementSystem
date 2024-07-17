@@ -3,21 +3,21 @@ import {
   changeBookSlotLimit,
   issueBook,
   returnBook,
-} from "../functions/admin.mjs";
-import { createAccount } from "../functions/auths.mjs";
-import { createUser } from "../functions/users.mjs";
+} from "../controller/admin.mjs";
+import { createAccount } from "../controller/auths.mjs";
+import { createUser } from "../controller/users.mjs";
 
 const router = Router();
 
-router.post("/api/admin/bookLimit", async (req, res) =>
+router.post("/admin/bookLimit", async (req, res) =>
   changeBookSlotLimit(req, res)
 );
 
-router.patch("/api/admin/bookIssue/:id", async (req, res) =>
+router.patch("/admin/bookIssue/:id", async (req, res) =>
   issueBook(req, res)
 );
 
-router.patch("/api/admin/bookReturn/:id", async (req, res) =>
+router.patch("/admin/bookReturn/:id", async (req, res) =>
   returnBook(req, res)
 );
 
