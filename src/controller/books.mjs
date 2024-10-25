@@ -49,6 +49,8 @@ export const getBookInfoByID = async (req, res) => {
 export const insertBookInfo = async (req, res) => {
   const { body } = req;
   try {
+    if (await bookTable.exists({ ISBN: body.ISBN }))
+      return res.status(400).json({ message: 'This book already exists.' });
     const newBook = await bookTable.create(body);
     return res.status(200).json(newBook);
   } catch (err) {
