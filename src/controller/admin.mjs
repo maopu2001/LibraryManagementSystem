@@ -17,10 +17,20 @@ export const issueBook = async (req, res) => {
     if (!(await userTable.exists({ regId: id }))) {
       return res.status(404).json({ message: 'User not found' });
     }
+    let notFoundBooks = [];
+    let alreadyIssuedBooks = [];
+    let notAvailableBooks = [];
+    let issuedBooks = [];
+
     for (let ISBN of bookArray) {
+      //checking if the user has any slot remaining
+      if ((await userTable.findOne({ regId: id })).bookList.length > SLOT_LIMIT) {
+        return res.status(400).json({ message: "User doesn't have any book slot remaining" });
+      }
+
       // checking if the book exists
       if (!(await bookTable.exists({ ISBN: ISBN }))) {
-        console.log({ message: `ISBN: ${ISBN}, Book is not found ` });
+        notFoundBooks.push(ISBN);
         continue;
       }
 
@@ -34,30 +44,28 @@ export const issueBook = async (req, res) => {
         }
       }
       if (possessed) {
-        console.log({
-          message: `ISBN: ${ISBN}, Book is alrdy in the possession of this user `,
-        });
+        alreadyIssuedBooks.push(ISBN);
         continue;
       }
 
       // checking if any books remains to issue
       let remainingBooks = await bookTable.findOne({ ISBN: ISBN });
       if (remainingBooks.qty <= 0) {
-        console.log({ message: `ISBN: ${ISBN}, Book is not available now ` });
+        notAvailableBooks.push(ISBN);
         continue;
-      }
-
-      //checking if the user has any slot remaining
-      if ((await userTable.findOne({ regId: id })).bookList.length > SLOT_LIMIT) {
-        return res.status(400).json({ message: "User doesn't have any book slot remaining" });
       }
 
       // issuing book
       await userTable.updateOne({ regId: id }, { $push: { bookList: ISBN } });
       await bookTable.updateOne({ ISBN: ISBN }, { $inc: { qty: -1 } });
-      console.log({ message: `Book with ISBN: ${ISBN} issued ` });
+      issuedBooks.push(ISBN);
     }
-    return res.sendStatus(200);
+    return res.status(200).json({
+      issued: issuedBooks,
+      notFound: notFoundBooks,
+      notAvailable: notAvailableBooks,
+      alreadyIssued: alreadyIssuedBooks,
+    });
   } catch (err) {
     return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
@@ -73,10 +81,14 @@ export const returnBook = async (req, res) => {
     if (!(await userTable.exists({ regId: id }))) {
       return res.status(404).json({ message: 'User not found' });
     }
+    let notFoundBooks = [];
+    let notPossessedBooks = [];
+    let returnedBooks = [];
+
     for (let ISBN of bookArray) {
       // checking if the book exists
       if (!(await bookTable.exists({ ISBN: ISBN }))) {
-        console.log({ message: `ISBN: ${ISBN}, Book is not found ` });
+        notFoundBooks.push(ISBN);
         continue;
       }
       // checking if the book is in possession of this user
@@ -89,18 +101,16 @@ export const returnBook = async (req, res) => {
         }
       }
       if (!possessed) {
-        console.log({
-          message: `ISBN: ${ISBN}, Book is not in this users possession `,
-        });
+        notPossessedBooks.push(ISBN);
         continue;
       }
 
       // returning book
       await userTable.updateOne({ regId: id }, { $pull: { bookList: ISBN } });
       await bookTable.updateOne({ ISBN: ISBN }, { $inc: { qty: 1 } });
-      console.log({ message: `Book with ISBN: ${ISBN} returned` });
+      returnedBooks.push(ISBN);
     }
-    return res.sendStatus(200);
+    return res.status(200).json({ returned: returnedBooks, notFound: notFoundBooks, notPossessed: notPossessedBooks });
   } catch (err) {
     return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
