@@ -1,5 +1,10 @@
 import bookTable from '../schemas/books.mjs';
 
+const numbertoOrdinals = (n) => {
+  const ordinals = ['', '1st', '2nd', '3rd'];
+  return ordinals[n] || `${n}th`;
+};
+
 export const filterBookInfo = async (req, res) => {
   const {
     query: { filter, value },
@@ -51,6 +56,7 @@ export const insertBookInfo = async (req, res) => {
   try {
     if (await bookTable.exists({ ISBN: body.ISBN }))
       return res.status(400).json({ message: 'This book already exists.' });
+    if (body.edition) body.edition = numbertoOrdinals(body.edition);
     const newBook = await bookTable.create(body);
     return res.status(200).json(newBook);
   } catch (err) {
@@ -67,6 +73,7 @@ export const patchBookInfo = async (req, res) => {
 
   try {
     if (await bookTable.exists({ ISBN: id })) {
+      if (body.edition) body.edition = numbertoOrdinals(body.edition);
       const updatedBook = await bookTable.updateOne({ ISBN: id }, { $set: body });
       return res.status(200).send(updatedBook);
     } else {

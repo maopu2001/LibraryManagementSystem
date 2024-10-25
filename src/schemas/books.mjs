@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const bookSchema = new Schema({
   ISBN: {
@@ -12,7 +12,8 @@ const bookSchema = new Schema({
     required: true,
   },
   edition: {
-    type: Number,
+    type: String,
+    default: '1st',
   },
   author: {
     type: String,
@@ -25,6 +26,7 @@ const bookSchema = new Schema({
   qty: {
     type: Number,
     required: true,
+    default: 1,
   },
   cover: {
     type: String,
@@ -37,14 +39,16 @@ const bookSchema = new Schema({
     shelfNo: {
       type: Number,
       required: true,
+      default: 0,
     },
     shelveNo: {
       type: Number,
       required: true,
+      default: 0,
     },
   },
   userList: [],
 });
 
-const bookTable = model("book", bookSchema);
+const bookTable = model('book', bookSchema);
 export default bookTable;
