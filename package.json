@@ -2,9 +2,10 @@
   "name": "librarymanagementsystem",
   "version": "1.0.0",
   "description": "",
-  "main": "server.mjs",
+  "main": "index.mjs",
   "scripts": {
-    "test": "nodemon ./index.mjs"
+    "dev": "nodemon ./index.mjs",
+    "start": "node ./index.mjs"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,6 @@
     "express": "^4.18.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
   },
   "type": "module"
 }

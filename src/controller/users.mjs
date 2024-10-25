@@ -1,5 +1,5 @@
-import userTable from "../schemas/users.mjs";
-import authTable from "../schemas/auths.mjs";
+import userTable from '../schemas/users.mjs';
+import authTable from '../schemas/auths.mjs';
 
 export const filterUserInfo = async (req, res) => {
   const {
@@ -8,10 +8,10 @@ export const filterUserInfo = async (req, res) => {
 
   try {
     if (!filter && !value) {
-      const Users = await userTable.find({}, "-_id -__v").sort({ regId: 1 });
+      const Users = await userTable.find({}, '-_id -__v').sort({ regId: 1 });
       return res.status(200).json(Users);
     }
-    if (filter === "regId") {
+    if (filter === 'regId') {
       return res.status(400).json("regId can't be used as filter");
     }
 
@@ -19,9 +19,9 @@ export const filterUserInfo = async (req, res) => {
       const Users = await userTable
         .find(
           {
-            [filter]: { $regex: value, $options: "i" },
+            [filter]: { $regex: value, $options: 'i' },
           },
-          "-_id -__v"
+          '-_id -__v'
         )
         .sort({ regId: 1 });
       return res.status(200).json(Users);
@@ -29,21 +29,18 @@ export const filterUserInfo = async (req, res) => {
       return res.sendStatus(400);
     }
   } catch (err) {
-    return res.status(400).json({ Error: err });
+    return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
 };
 
 export const getUserInfoByID = async (req, res) => {
-  const { id } = req.params;
+  const { regId } = req.params;
   try {
-    if (await userTable.exists({ regId: id })) {
-      const users = await userTable.find({ regId: id }, "-_id -__v");
-      return res.status(200).json(users);
-    } else {
-      return res.sendStatus(404);
-    }
+    const user = await userTable.findOne({ regId: regId }, '-_id -__v');
+    if (!user) return res.sendStatus(404);
+    return res.status(200).json(user);
   } catch (err) {
-    return res.status(400).json({ Error: err });
+    return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
 };
 
@@ -60,7 +57,7 @@ export const insertUserInfo = async (req, res) => {
     const newUser = createUser(body);
     return res.status(200).json(newUser);
   } catch (err) {
-    return res.status(400).json({ Error: err });
+    return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
 };
 
@@ -70,17 +67,13 @@ export const patchUserInfo = async (req, res) => {
 
   try {
     if (await userTable.exists({ regId: regId })) {
-      // console.log(id);
-      const updatedUser = await userTable.updateOne(
-        { regId: regId },
-        { $set: body }
-      );
+      const updatedUser = await userTable.updateOne({ regId: regId }, { $set: body });
       return res.status(200).send(updatedUser);
     } else {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(400).json({ message: "User doesn't exists" });
     }
   } catch (err) {
-    return res.status(400).json({ Error: err });
+    return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
 };
 
@@ -90,14 +83,12 @@ export const deleteUserInfo = async (req, res) => {
     if (await userTable.exists({ regId: id })) {
       await userTable.deleteOne({ regId: id });
       await authTable.deleteOne({ regId: id });
-      const Users = await userTable
-        .find({}, "-_id -name._id -__v")
-        .sort({ regId: 1 });
+      const Users = await userTable.find({}, '-_id -name._id -__v').sort({ regId: 1 });
       return res.status(200).json(Users);
     } else {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
   } catch (err) {
-    return res.status(400).json({ Error: err });
+    return res.status(500).json({ message: err.message || err || 'Something went wrong.' });
   }
 };
