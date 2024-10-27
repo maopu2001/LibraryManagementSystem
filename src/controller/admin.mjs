@@ -24,7 +24,7 @@ export const issueBook = async (req, res) => {
 
     //checking if the user has any slot remaining
     const remainingSlots = SLOT_LIMIT - user.bookList.length;
-    if (remainingSlots < 1)
+    if (remainingSlots < bookArray.length)
       return res.status(400).json({
         message: `User doesn't have any book slot remaining. Remaining slots: ${remainingSlots}`,
       });
