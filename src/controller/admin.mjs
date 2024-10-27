@@ -24,7 +24,7 @@ export const issueBook = async (req, res) => {
 
     for (let ISBN of bookArray) {
       //checking if the user has any slot remaining
-      if ((await userTable.findOne({ regId: id })).bookList.length > SLOT_LIMIT) {
+      if ((await userTable.findOne({ regId: id })).bookList.length >= SLOT_LIMIT) {
         return res.status(400).json({ message: "User doesn't have any book slot remaining" });
       }
 
