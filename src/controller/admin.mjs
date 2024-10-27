@@ -14,43 +14,45 @@ export const issueBook = async (req, res) => {
 
   try {
     // checking if this user exists
-    if (!(await userTable.exists({ regId: id }))) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const user = await userTable.findOne({ regId: id });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
     let notFoundBooks = [];
     let alreadyIssuedBooks = [];
     let notAvailableBooks = [];
     let issuedBooks = [];
 
-    for (let ISBN of bookArray) {
-      //checking if the user has any slot remaining
-      if ((await userTable.findOne({ regId: id })).bookList.length >= SLOT_LIMIT) {
-        return res.status(400).json({ message: "User doesn't have any book slot remaining" });
-      }
+    //checking if the user has any slot remaining
+    const remainingSlots = SLOT_LIMIT - user.bookList.length;
+    if (remainingSlots < 1)
+      return res.status(400).json({
+        message: `User doesn't have any book slot remaining. Remaining slots: ${remainingSlots}`,
+      });
 
+    for (let ISBN of bookArray) {
       // checking if the book exists
-      if (!(await bookTable.exists({ ISBN: ISBN }))) {
+      const book = await bookTable.findOne({ ISBN: ISBN });
+      if (!book) {
         notFoundBooks.push(ISBN);
         continue;
       }
 
       //checking if the book has been possessed by this user already
-      let books = await userTable.findOne({ regId: id });
       let possessed = false;
-      for (let book of books.bookList) {
-        if (book == ISBN) {
+      for (let possessedBook of user.bookList) {
+        if (possessedBook == ISBN) {
           possessed = true;
           break;
         }
       }
+
       if (possessed) {
         alreadyIssuedBooks.push(ISBN);
         continue;
       }
 
       // checking if any books remains to issue
-      let remainingBooks = await bookTable.findOne({ ISBN: ISBN });
-      if (remainingBooks.qty <= 0) {
+      if (book.qty <= 0) {
         notAvailableBooks.push(ISBN);
         continue;
       }
